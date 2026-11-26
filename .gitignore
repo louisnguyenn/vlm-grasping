@@ -18,3 +18,4 @@ ggcnn_weights_cornell/
 *.pth
 
 .vscode/
+.env
