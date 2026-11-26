@@ -10,7 +10,7 @@ client = genai.Client(
     api_key=os.environ["GEMINI_API_KEY"]
 )
 
-image_path = "data/cornell/01/pcd0100r.png"
+image_path = "data/cornell/01/pcd0164r.png"
 
 image = Image.open(image_path).convert("RGB")
 
