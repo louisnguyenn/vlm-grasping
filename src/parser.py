@@ -1,6 +1,7 @@
 import json
 import math
 
+# Extract and validate model predictions
 
 def parse_response(response_text):
     """Extract JSON from a VLM response."""

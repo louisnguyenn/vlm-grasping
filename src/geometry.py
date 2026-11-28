@@ -1,5 +1,6 @@
 import math
 
+# Perform deterministic geometric calculations
 
 def normalized_to_pixel(point, image_width, image_height):
     """Convert normalized coordinates to image coordinates."""

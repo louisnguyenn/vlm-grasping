@@ -1,5 +1,8 @@
 import os
 import time
+from src.parser import parse_response, validate_prediction
+from src.geometry import normalized_to_pixel, calculate_grasp
+import math
 
 from google import genai
 from dotenv import load_dotenv
@@ -89,3 +92,49 @@ print("\nModel response:")
 print(response.text)
 
 print(f"\nRequest latency: {elapsed_time:.2f} seconds")
+
+prediction = parse_response(response.text)
+
+validate_prediction(prediction)
+
+grasp = prediction["grasp"]
+
+contact_1 = normalized_to_pixel(
+    grasp["contact_1"],
+    image.width,
+    image.height
+)
+
+contact_2 = normalized_to_pixel(
+    grasp["contact_2"],
+    image.width,
+    image.height
+)
+
+predicted_center = normalized_to_pixel(
+    grasp["center"],
+    image.width,
+    image.height
+)
+
+calculated_grasp = calculate_grasp(
+    contact_1,
+    contact_2
+)
+
+print("\nConverted contact points:")
+print("Contact 1:", contact_1)
+print("Contact 2:", contact_2)
+
+print("\nPredicted center:")
+print(predicted_center)
+
+print("\nCalculated grasp:")
+print(calculated_grasp)
+
+center_error = math.hypot(
+    predicted_center["x"] - calculated_grasp["x"],
+    predicted_center["y"] - calculated_grasp["y"]
+)
+
+print(f"\nCenter consistency error: {center_error:.2f} px")
