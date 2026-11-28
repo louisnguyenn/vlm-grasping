@@ -119,3 +119,65 @@ The model justified its prediction by considering the estimated centre of mass, 
 **Preliminary Conclusion**
 
 The initial experiment demonstrates the feasibility of obtaining numerical grasp predictions directly from a general-purpose vision-language model. However, further prompt engineering, output standardization and quantitative evaluation are required before determining the reliability of this approach for robotic grasping applications.
+
+### Experiment 2 — Structured Prompting and Spatial Localization
+
+**Objective**
+
+Investigate whether explicit coordinate conventions and structured output requirements improve the usability and accuracy of VLM-generated robotic grasp predictions.
+
+**Experimental Configuration**
+
+- Model: Gemini 3.6 Flash (`gemini-3.6-flash`)
+- Dataset: Cornell Grasping Dataset
+- Sample: pcd0100
+- Object: Remote control
+- Image resolution: 640 × 480 pixels
+- Prompting strategies: Basic zero-shot prompting and structured zero-shot prompting
+
+**Experimental Results**
+
+| Parameter | Basic Prompt | Structured Prompt |
+|---|---|---|
+| Object recognition | Correct | Correct |
+| Grasp centre (pixels) | (282.88, 306.24) | (442, 306) |
+| Grasp orientation | 85°–90° | 3° |
+| Gripper width | 65–75 normalized units | 65 pixels |
+| Rectangle height | Not provided | 30 pixels |
+| Output format | Unstructured Markdown | JSON within Markdown code fence |
+| Request latency | 144.42 s | 16.96 s |
+| Visual centre localization | On target | Outside target |
+
+**Observations**
+
+Visualization of the initial prediction confirmed that the predicted grasp centre was located approximately at the geometric centre of the remote control.
+
+The structured prompt successfully produced a consistent set of numerical parameters in a JSON-formatted response. However, the predicted grasp centre was located outside the target object, resulting in an unsuitable grasp location.
+
+A comparison of the two predictions revealed that the structured prediction retained the previous normalized x-coordinate while producing a y-coordinate approximately equal to the converted pixel coordinate.
+
+This suggests a potential inconsistency in the model's interpretation or conversion of spatial coordinates.
+
+**Key Findings**
+
+- Explicit output formatting does not necessarily improve spatial localization accuracy.
+- Structured prompting successfully improved the machine readability of the model response.
+- The model may exhibit inconsistencies when converting normalized spatial coordinates into image pixel coordinates.
+- The structured prediction demonstrated an observed latency reduction of approximately 88.3%, although additional trials are required to establish a reliable comparison.
+- Qualitative grasp reasoning does not necessarily correspond to accurate numerical grasp predictions.
+
+**Proposed Methodological Improvement**
+
+To reduce potential coordinate conversion inconsistencies, subsequent experiments will investigate normalized spatial predictions with deterministic coordinate conversion performed externally in Python.
+
+Additionally, a contact-point-based grasp representation will be investigated. The model will predict opposing gripper contact points, from which grasp centre, contact separation and orientation can be calculated mathematically.
+
+This approach aims to reduce reliance on the VLM for deterministic geometric calculations.
+
+**Limitations**
+
+The observations are based on a single image and one inference trial per prompting strategy. Quantitative comparison against ground-truth grasp rectangles has not yet been performed.
+
+**Preliminary Conclusion**
+
+The experiment demonstrates that structured prompting can improve output standardization without necessarily improving spatial prediction accuracy. Further investigation is required to determine whether normalized coordinate representations and contact-point-based predictions improve grasp localization and consistency.
